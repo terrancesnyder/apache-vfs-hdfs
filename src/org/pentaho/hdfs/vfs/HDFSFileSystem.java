@@ -19,9 +19,15 @@ package org.pentaho.hdfs.vfs;
 
 import java.util.Collection;
 
-import org.apache.commons.vfs.*;
-import org.apache.commons.vfs.provider.AbstractFileSystem;
-import org.apache.commons.vfs.provider.GenericFileName;
+import org.apache.commons.vfs2.Capability;
+import org.apache.commons.vfs2.FileName;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystem;
+import org.apache.commons.vfs2.FileSystemException;
+import org.apache.commons.vfs2.FileSystemOptions;
+import org.apache.commons.vfs2.provider.AbstractFileName;
+import org.apache.commons.vfs2.provider.AbstractFileSystem;
+import org.apache.commons.vfs2.provider.GenericFileName;
 import org.apache.hadoop.conf.Configuration;
 
 public class HDFSFileSystem extends AbstractFileSystem implements FileSystem {
@@ -32,16 +38,6 @@ public class HDFSFileSystem extends AbstractFileSystem implements FileSystem {
   protected HDFSFileSystem(final FileName rootName, final FileSystemOptions fileSystemOptions) {
     super(rootName, null, fileSystemOptions);
   }
-
-  @SuppressWarnings("unchecked")
-  protected void addCapabilities(Collection caps) {
-    caps.addAll(HDFSFileProvider.capabilities);
-  }
-
-  protected FileObject createFile(FileName name) throws Exception {
-    return new HDFSFileObject(name, this);
-  }
-
   
   /**
    * Use of this method is for unit testing, it allows us to poke in a test filesystem without
@@ -77,5 +73,15 @@ public class HDFSFileSystem extends AbstractFileSystem implements FileSystem {
     }
     return hdfs;
   }
+
+	@Override
+	protected FileObject createFile(AbstractFileName name) throws Exception {
+		return new HDFSFileObject(name, this);
+	}
+	
+	@Override
+	protected void addCapabilities(Collection<Capability> caps) {
+		caps.addAll(HDFSFileProvider.capabilities);
+	}
 
 }
