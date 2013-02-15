@@ -18,11 +18,17 @@
   <dependencies defaultconf="default->default">
 
     <!--  external dependencies -->
-   	<dependency org="org.apache.commons" name="commons-vfs2" rev="2.0" transitive="true" />
-    <dependency org="org.apache.hadoop" name="hadoop-core" rev="1.0.4" transitive="true" />
-    <dependency org="org.apache.hadoop" name="hadoop-test" rev="1.0.4" transitive="false" />
+    <dependency org="org.apache.commons" name="commons-vfs2" rev="2.0" transitive="true" />
+    <!-- Hadoop 2.0 -->
+   	<dependency org="org.apache.hadoop" name="hadoop-common" rev="2.0.0-cdh4.1.2" transitive="true" />
+   	<dependency org="org.apache.hadoop" name="hadoop-hdfs" rev="2.0.0-cdh4.1.2" transitive="true" />
+   	<dependency org="org.apache.hadoop" name="hadoop-test" rev="2.0.0-mr1-cdh4.1.2" transitive="true" conf="test->default" />
+   	<dependency org="org.apache.hadoop" name="hadoop-minicluster" rev="2.0.0-mr1-cdh4.1.2" transitive="true" conf="test->default" />
+   	
+    <!-- Hadoop 1.0.4 -->
+    <!-- dependency org="org.apache.hadoop" name="hadoop-core" rev="1.0.4" transitive="true" /--> 
 
-	<!-- test -->
+	  <!-- test -->
     <dependency org="commons-io" name="commons-io" rev="1.4" conf="test->default"/>
     <dependency org="junit" name="junit" rev="4.11" conf="test->default"/>
 

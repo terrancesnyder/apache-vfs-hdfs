@@ -31,54 +31,40 @@ import org.apache.commons.vfs2.provider.GenericFileName;
 import org.apache.hadoop.conf.Configuration;
 
 public class HDFSFileSystem extends AbstractFileSystem implements FileSystem {
+	
+	private org.apache.hadoop.fs.FileSystem hdfs;
 
-  private static org.apache.hadoop.fs.FileSystem mockHdfs;
-  private org.apache.hadoop.fs.FileSystem hdfs;
+	protected HDFSFileSystem(final FileName rootName, final FileSystemOptions fileSystemOptions) {
+		super(rootName, null, fileSystemOptions);
+	}
+	
+	public org.apache.hadoop.fs.FileSystem getHDFSFileSystem() throws FileSystemException {
+		if (hdfs == null) {
+		      Configuration conf = new Configuration();
+		      GenericFileName genericFileName = (GenericFileName) getRootName();
+		      String url = "hdfs://" + genericFileName.getHostName() + ":" + genericFileName.getPort();
+		      conf.set("fs.default.name", url);
 
-  protected HDFSFileSystem(final FileName rootName, final FileSystemOptions fileSystemOptions) {
-    super(rootName, null, fileSystemOptions);
-  }
-  
-  /**
-   * Use of this method is for unit testing, it allows us to poke in a test filesystem without
-   * interfering with any other objects in the vfs system
-   * 
-   * @param hdfs the mock file system
-   */
-  public static void setMockHDFSFileSystem(org.apache.hadoop.fs.FileSystem hdfs) {
-    mockHdfs = hdfs;
-  }
-  
-  public org.apache.hadoop.fs.FileSystem getHDFSFileSystem() throws FileSystemException {
-    if (mockHdfs != null) {
-      return mockHdfs;
-    }
-    if (hdfs == null) {
-      Configuration conf = new Configuration();
-      GenericFileName genericFileName = (GenericFileName) getRootName();
-      String url = "hdfs://" + genericFileName.getHostName() + ":" + genericFileName.getPort();
-      conf.set("fs.default.name", url);
+		      String replication = System.getProperty("dfs.replication", "3");
+		      conf.set("dfs.replication", replication);
 
-      String replication = System.getProperty("dfs.replication", "3");
-      conf.set("dfs.replication", replication);
-
-      if (genericFileName.getUserName() != null && !"".equals(genericFileName.getUserName())) {
-        conf.set("hadoop.job.ugi", genericFileName.getUserName() + ", " + genericFileName.getPassword());
-      }
-      try {
-        hdfs = org.apache.hadoop.fs.FileSystem.get(conf);
-      } catch (Throwable t) {
-        throw new FileSystemException("Could not getHDFSFileSystem() for " + url, t);
-      }
-    }
-    return hdfs;
-  }
+		      if (genericFileName.getUserName() != null && !"".equals(genericFileName.getUserName())) {
+		        conf.set("hadoop.job.ugi", genericFileName.getUserName() + ", " + genericFileName.getPassword());
+		      }
+		      try {
+		        hdfs = org.apache.hadoop.fs.FileSystem.get(conf);
+		      } catch (Throwable t) {
+		        throw new FileSystemException("Could not getHDFSFileSystem() for " + url, t);
+		      }
+		    }
+		    return hdfs;
+	  }
 
 	@Override
 	protected FileObject createFile(AbstractFileName name) throws Exception {
 		return new HDFSFileObject(name, this);
 	}
-	
+
 	@Override
 	protected void addCapabilities(Collection<Capability> caps) {
 		caps.addAll(HDFSFileProvider.capabilities);

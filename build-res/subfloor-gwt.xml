@@ -134,7 +134,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       Override to use OS-specific IVY configurations
       ====================================================================-->
   <target name="resolve-codegen" depends="resolve-init">
-    <ivy:resolve file="ivy.xml" conf="codegen" />
+    <ivy:resolve file="ivy.xml" conf="codegen" checkconsistency="false" />
     <ivy:retrieve conf="codegen" pattern="${codegenlib.dir}/[module]-[revision](-[classifier]).[ext]" symlink="${ivy.use.symlinks.internal}" />
   </target>
 
